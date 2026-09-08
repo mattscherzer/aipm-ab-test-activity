@@ -16,10 +16,10 @@ Same versions on every machine.
 
 ## Run
 
-**The notebook** is the Step 2 artefact — it generates the dataset and explores it, with charts:
+**The notebooks** — Step 2 generates the data, Step 3 analyses it. Run them in order:
 
 ```bash
-uv run jupyter lab 02-synthetic-data.ipynb
+uv run jupyter lab
 ```
 
 Pick the **Python 3 (uv)** kernel. It ships with outputs rendered, so it can also just be read.
@@ -29,21 +29,25 @@ the notebook creates it. To build it without opening Jupyter:
 
 ```bash
 uv run jupyter nbconvert --to notebook --execute --inplace 02-synthetic-data.ipynb
+uv run jupyter nbconvert --to notebook --execute --inplace 03-results.ipynb
 ```
 
-**The analysis scripts** are stdlib-only with PEP 723 inline metadata, so they run inside the
-project or completely standalone:
+Both notebooks ship with outputs rendered, so they can be read without running anything.
 
-```bash
-uv run analyze_inputs.py      # figures fed to the CXL result calculator, plus clustering correction
-uv run check_guardrails.py    # guardrail evaluation and robustness checks
-```
+### Why only Step 1 is a document
 
-Add `--no-project` to run either in a throwaway environment, ignoring `.venv` entirely:
+`01-step1-planning.md` is prose because the plan has to exist **before** any code runs — it is an
+input to the analysis, not an output of it. Steps 2 and 3 are notebooks because everything in them is
+derived from the data, and a prose restatement would just be a second place for the same numbers to
+drift out of date.
 
-```bash
-uv run --no-project check_guardrails.py
-```
+### Where the boundary sits
+
+**Step 2 asks: did the generator produce what I specified?** — integrity invariants, realised rates
+against targets, coverage against the gate.
+**Step 3 asks: what does the experiment say?** — SRM, uplift, significance, guardrails, decision.
+
+No analysis cell appears in both notebooks.
 
 ## Files
 
@@ -51,10 +55,8 @@ uv run --no-project check_guardrails.py
 |---|---|
 | `00-company-brief.md` | The fictional company. Traffic, baselines, platform constraints, calendar. |
 | `01-step1-planning.md` | **Step 1** — goal, KPI, hypothesis, variants, randomisation, sample size, stopping conditions, assumptions, risks. |
-| `02-synthetic-data.ipynb` | **Step 2** — data generation and exploration. Config, generator, column dictionary, integrity checks, charts. The single source for the dataset. |
-| `03-results.md` | **Step 3** — conversion per variant, uplift, significance, recommendation. |
-| `analyze_inputs.py` | Computes the CXL calculator inputs and the user-clustering correction. |
-| `check_guardrails.py` | Guardrail evaluation and robustness checks. |
+| `02-synthetic-data.ipynb` | **Step 2** — generates the dataset and verifies it matches spec. Config, generator, column dictionary, integrity checks, generator diagnostics. The single source for the data. |
+| `03-results.ipynb` | **Step 3** — the analysis. Validity gates, conversion per variant, uplift, significance, ITT dilution, guardrails, robustness, segments, the decision and follow-ups. |
 | `ab_test_sessions.csv` | The dataset — 150,568 sessions, 100,000 users. Generated, not committed. |
 
 ## Reproducibility
