@@ -140,16 +140,19 @@
   }
   .thesis b { font-weight: 600; color: var(--accent); }
 
-  .variants {
+  .setup {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 22px;
+    gap: 40px;
+    align-items: start;
   }
+  .variant-stack { display: flex; flex-direction: column; gap: 15px; }
   .variant {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 9px;
   }
+  .variant-stack .mock { flex: none; }
   .variant-tag {
     display: flex;
     align-items: center;
@@ -461,7 +464,7 @@
 
   @media (max-width: 860px) {
     .slide { padding: 30px 24px 34px; min-height: 0; }
-    .variants, .findings, .cols { grid-template-columns: 1fr; gap: 24px; }
+    .setup, .findings, .cols { grid-template-columns: 1fr; gap: 24px; }
     .strip { grid-template-columns: 1fr; }
     .strip > div { padding: 14px 0 0; border-left: 0; border-top: 1px solid var(--rule-soft); }
     .strip > div:first-child { border-top: 0; }
@@ -490,27 +493,64 @@
     </div>
 
     <p class="thesis">
-      Readers skip stories they can&rsquo;t judge from the headline alone. So we asked whether a
-      <b>one-to-two sentence summary</b> beneath each homepage headline would get more of them to click.
+      Readers told us they couldn&rsquo;t tell what a story was about from the homepage. So we gave
+      them <b>one or two sentences</b> to decide with.
     </p>
 
-    <div class="variants">
-      <div class="variant">
-        <div class="variant-tag"><span class="swatch swatch-a"></span>A &mdash; Control</div>
-        <div class="mock">
-          <span class="mock-kicker">Transit</span>
-          <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
-          <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+    <div class="setup">
+      <figure>
+        <p class="chart-title">Homepage click-through, last 12 months</p>
+        <svg viewBox="0 0 400 200" role="img"
+             aria-label="Homepage click-through fell from 38.4 percent twelve months ago to 34.1 percent today. The aim is to recover toward 38 percent.">
+          <!-- position scale, so a zoomed y-axis is legitimate: 40% at y=26, 32% at y=146 -->
+          <g font-family="Libre Franklin, sans-serif" font-size="11" fill="var(--muted)">
+            <line x1="46" y1="26" x2="392" y2="26" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="38" y="30" text-anchor="end">40%</text>
+            <line x1="46" y1="86" x2="392" y2="86" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="38" y="90" text-anchor="end">36%</text>
+            <line x1="46" y1="146" x2="392" y2="146" stroke="var(--rule)" stroke-width="1"></line>
+            <text x="38" y="150" text-anchor="end">32%</text>
+          </g>
+
+          <line x1="78" y1="50" x2="205" y2="114.5" stroke="var(--ink-2)" stroke-width="2"></line>
+          <line x1="205" y1="114.5" x2="345" y2="56" stroke="var(--accent)" stroke-width="2"
+                stroke-dasharray="5 4"></line>
+          <circle cx="78" cy="50" r="5" fill="var(--ink-2)"></circle>
+          <circle cx="205" cy="114.5" r="5.5" fill="var(--ink-2)"></circle>
+          <circle cx="345" cy="56" r="5.5" fill="var(--surface)" stroke="var(--accent)"
+                  stroke-width="2"></circle>
+
+          <g font-family="Libre Franklin, sans-serif" text-anchor="middle">
+            <text x="78" y="38" font-size="13" font-weight="600" fill="var(--ink-2)">38.4%</text>
+            <text x="205" y="136" font-size="15" font-weight="600" fill="var(--ink)">34.1%</text>
+            <text x="345" y="44" font-size="13" font-weight="600" fill="var(--accent)">&asymp;38%</text>
+            <text x="78" y="172" font-size="11" fill="var(--muted)">12 months ago</text>
+            <text x="205" y="172" font-size="11" font-weight="600" fill="var(--ink-2)">today</text>
+            <text x="345" y="172" font-size="11" fill="var(--accent)">the aim</text>
+          </g>
+        </svg>
+        <figcaption>Down <b>4.3 points</b> in twelve months. A line chart encodes position rather than
+          length, so the zoomed axis here is fair &mdash; unlike a bar.</figcaption>
+      </figure>
+
+      <div class="variant-stack">
+        <div class="variant">
+          <div class="variant-tag"><span class="swatch swatch-a"></span>A &mdash; Control</div>
+          <div class="mock">
+            <span class="mock-kicker">Transit</span>
+            <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
+            <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+          </div>
         </div>
-      </div>
-      <div class="variant">
-        <div class="variant-tag"><span class="swatch swatch-b"></span>B &mdash; Treatment</div>
-        <div class="mock">
-          <span class="mock-kicker">Transit</span>
-          <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
-          <p class="mock-dek is-new">The 5&ndash;4 vote clears funding for two new light-rail stops.
-            Opponents have thirty days to file a challenge.</p>
-          <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+        <div class="variant">
+          <div class="variant-tag"><span class="swatch swatch-b"></span>B &mdash; Treatment</div>
+          <div class="mock">
+            <span class="mock-kicker">Transit</span>
+            <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
+            <p class="mock-dek is-new">The 5&ndash;4 vote clears funding for two new light-rail stops.
+              Opponents have thirty days to file a challenge.</p>
+            <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -589,15 +629,15 @@
           <p class="tile-sub">+4.05 percentage points</p>
         </div>
         <div class="tile">
-          <p class="tile-label">Confidence</p>
-          <p class="tile-value">99.99<span class="unit">%+</span></p>
-          <p class="tile-sub">p &lt; 0.0001 &nbsp;&middot;&nbsp; z = 14.7</p>
+          <p class="tile-label">If the summary did nothing</p>
+          <p class="tile-value">&lt;1 <span class="unit">in 10,000</span></p>
+          <p class="tile-sub">chance of a gap this big &nbsp;&middot;&nbsp; p &lt; 0.0001 &nbsp;&middot;&nbsp; z = 14.7</p>
         </div>
       </div>
     </div>
 
     <figure>
-      <p class="chart-title">Where the true uplift sits &mdash; 95% confidence interval</p>
+      <p class="chart-title">How sure are we? &mdash; 95% confidence interval on the uplift</p>
       <svg viewBox="0 0 900 96" role="img"
            aria-label="The 95 percent confidence interval for the relative uplift runs from plus 10.32 percent to plus 13.49 percent, centred on plus 11.90 percent. It does not come close to zero.">
         <!-- scale: 0% at x=60, 15% at x=860  ->  53.33 px per point -->
@@ -616,18 +656,18 @@
         <line x1="779.5" y1="34" x2="779.5" y2="62" stroke="var(--accent)" stroke-width="2"></line>
         <circle cx="694.7" cy="48" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"></circle>
         <g font-family="Libre Franklin, sans-serif" font-size="13" font-weight="600" fill="var(--accent)">
-          <text x="694.7" y="26" text-anchor="middle">+11.90%</text>
+          <text x="694.7" y="26" text-anchor="middle">+11.90% measured</text>
         </g>
         <g font-family="Libre Franklin, sans-serif" font-size="11.5" fill="var(--ink-2)">
           <text x="610.4" y="90" text-anchor="middle">+10.32%</text>
           <text x="779.5" y="90" text-anchor="middle">+13.49%</text>
         </g>
         <g font-family="Libre Franklin, sans-serif" font-size="11.5" fill="var(--muted)">
-          <text x="76" y="30">no effect</text>
+          <text x="76" y="30">0% = no effect</text>
         </g>
       </svg>
-      <figcaption>The whole plausible range sits well clear of zero. Even the pessimistic end of the
-        interval is a double-digit improvement.</figcaption>
+      <figcaption>The dot is what we measured; the bar is the range consistent with the data. It sits
+        well clear of zero, so &ldquo;no effect&rdquo; does not explain what we saw.</figcaption>
     </figure>
   </section>
 
