@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+
+# 11 MB and byte-reproducible from the seed. Regenerate with:
+#   uv run jupyter nbconvert --to notebook --execute --inplace 02-synthetic-data.ipynb
+ab_test_sessions.csv
