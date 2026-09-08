@@ -1,0 +1,748 @@
+<title>Should Headlines Carry Summaries?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Libre+Franklin:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground:      #eef1f4;
+    --surface:     #ffffff;
+    --surface-2:   #f4f7f9;
+    --ink:         #101a2b;
+    --ink-2:       #43536b;
+    --muted:       #7d8b9f;
+    --rule:        #d9e0e8;
+    --rule-soft:   #e8edf2;
+    --accent:      #2a78d6;
+    --accent-soft: #e7f0fb;
+    --deemph:      #98a2b0;
+    --good:        #0a6c2f;
+    --warn:        #96590a;
+    --shadow:      0 1px 2px rgba(16,26,43,.06), 0 12px 32px rgba(16,26,43,.08);
+
+    --display: "Newsreader", Georgia, "Times New Roman", serif;
+    --body: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0c1117;
+      --surface:     #151c25;
+      --surface-2:   #1b242f;
+      --ink:         #f1f5f9;
+      --ink-2:       #b4c1d1;
+      --muted:       #8392a6;
+      --rule:        #29333f;
+      --rule-soft:   #202a35;
+      --accent:      #3987e5;
+      --accent-soft: #15263a;
+      --deemph:      #6b7889;
+      --good:        #38c25d;
+      --warn:        #e2a33f;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.34);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0c1117;
+    --surface:     #151c25;
+    --surface-2:   #1b242f;
+    --ink:         #f1f5f9;
+    --ink-2:       #b4c1d1;
+    --muted:       #8392a6;
+    --rule:        #29333f;
+    --rule-soft:   #202a35;
+    --accent:      #3987e5;
+    --accent-soft: #15263a;
+    --deemph:      #6b7889;
+    --good:        #38c25d;
+    --warn:        #e2a33f;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.34);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------------------------------------------------------------- deck */
+  .deck {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 20px 20px 96px;
+  }
+
+  .slide {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 44px 52px 48px;
+    min-height: 620px;
+    display: none;
+    flex-direction: column;
+    gap: 26px;
+  }
+  .slide.is-current { display: flex; }
+
+  .slide-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .head-meta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+
+  /* ------------------------------------------------------- slide 1 */
+  .thesis {
+    font-family: var(--display);
+    font-size: clamp(20px, 2.1vw, 26px);
+    line-height: 1.42;
+    font-weight: 400;
+    color: var(--ink);
+    max-width: 62ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .thesis b { font-weight: 600; color: var(--accent); }
+
+  .variants {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .variant {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .variant-tag {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .swatch {
+    width: 12px; height: 12px; border-radius: 2px; flex: none;
+  }
+  .swatch-a { background: var(--deemph); }
+  .swatch-b { background: var(--accent); }
+
+  /* the homepage card mock-up — the thing under test */
+  .mock {
+    background: var(--surface-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 4px;
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .mock-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .mock-headline {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .mock-dek {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .mock-dek.is-new {
+    border-left: 2px solid var(--accent);
+    padding-left: 11px;
+    margin-left: -13px;
+  }
+  .mock-rule { border-top: 1px solid var(--rule); margin-top: auto; padding-top: 9px; }
+  .mock-byline { font-size: 11px; color: var(--muted); }
+
+  /* ------------------------------------------------------- stat strip */
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--rule);
+    margin-top: auto;
+  }
+  .strip > div { padding: 16px 22px 0; border-left: 1px solid var(--rule-soft); }
+  .strip > div:first-child { padding-left: 0; border-left: 0; }
+  .strip dt {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 5px;
+  }
+  .strip dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .strip dd b { font-weight: 600; }
+
+  /* ------------------------------------------------------- slide 2 */
+  .findings {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  figure { margin: 0; }
+  figcaption {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.45;
+  }
+  svg { display: block; width: 100%; height: auto; }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  .tiles { display: flex; flex-direction: column; gap: 0; }
+  .tile { padding: 18px 0; border-bottom: 1px solid var(--rule-soft); }
+  .tile:first-child { padding-top: 0; }
+  .tile:last-child { border-bottom: 0; }
+  .tile-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 7px;
+  }
+  .tile-value {
+    font-size: clamp(30px, 3.6vw, 42px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .tile-value .unit { font-size: .52em; font-weight: 500; color: var(--ink-2); letter-spacing: 0; }
+  .tile-value.is-up { color: var(--accent); }
+  .tile-sub {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 7px 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .rate-pair {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: clamp(24px, 2.8vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .rate-pair .from { color: var(--deemph); }
+  .rate-pair .arrow { color: var(--muted); font-weight: 400; font-size: .7em; }
+  .rate-pair .to { color: var(--accent); }
+
+  /* ------------------------------------------------------- slide 3 */
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+    border-radius: 5px;
+    padding: 24px 28px;
+  }
+  .verdict-word {
+    font-family: var(--display);
+    font-size: clamp(34px, 4.4vw, 52px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .verdict-why {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0;
+    max-width: 56ch;
+  }
+  .verdict-why b { font-weight: 600; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .col-head {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 4px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  ul.items li {
+    display: grid;
+    grid-template-columns: 15px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  ul.items li:last-child { border-bottom: 0; }
+  ul.items b { color: var(--ink); font-weight: 600; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    margin-top: 6px; flex: none;
+  }
+  .dot-warn { background: var(--warn); }
+  .dot-open { background: var(--muted); }
+  .num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+
+  /* ------------------------------------------------------- options */
+  .options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 26px;
+    border-top: 1px solid var(--rule);
+  }
+  .option {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 13px 16px 15px;
+    background: var(--surface);
+  }
+  .option-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 0 0 5px;
+  }
+  .option-why {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 0;
+  }
+  .option.is-chosen {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .option.is-chosen .option-name { color: var(--accent); }
+  .option.is-chosen .option-why { color: var(--ink-2); }
+  .mark {
+    width: 16px; height: 16px; flex: none;
+    border-radius: 50%;
+    border: 1.5px solid var(--rule);
+  }
+  .option.is-chosen .mark {
+    border-color: var(--accent);
+    background: var(--accent);
+    position: relative;
+  }
+  .option.is-chosen .mark::after {
+    content: "";
+    position: absolute;
+    left: 4.5px; top: 3px;
+    width: 4px; height: 7px;
+    border: solid var(--surface);
+    border-width: 0 1.8px 1.8px 0;
+    transform: rotate(45deg);
+  }
+
+  /* ------------------------------------------------------- controls */
+  .bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--rule);
+    padding: 11px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+  }
+  .bar button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 13px;
+    cursor: pointer;
+  }
+  .bar button:hover { border-color: var(--accent); color: var(--accent); }
+  .bar button:disabled { opacity: .4; cursor: default; border-color: var(--rule); color: var(--muted); }
+  .bar button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .dots { display: flex; gap: 7px; }
+  .dots button {
+    width: 9px; height: 9px; padding: 0;
+    border-radius: 50%;
+    background: var(--rule);
+    border: 0;
+    cursor: pointer;
+  }
+  .dots button[aria-current="true"] { background: var(--accent); }
+  .hint { font-size: 12px; color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 860px) {
+    .slide { padding: 30px 24px 34px; min-height: 0; }
+    .variants, .findings, .cols { grid-template-columns: 1fr; gap: 24px; }
+    .strip { grid-template-columns: 1fr; }
+    .strip > div { padding: 14px 0 0; border-left: 0; border-top: 1px solid var(--rule-soft); }
+    .strip > div:first-child { border-top: 0; }
+    .verdict { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hint { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  @media print {
+    .bar { display: none; }
+    .deck { max-width: none; padding: 0; }
+    .slide { display: flex !important; break-after: page; box-shadow: none; min-height: 0; }
+  }
+</style>
+
+<div class="deck">
+
+  <!-- ================================================== SLIDE 1 ==== -->
+  <section class="slide is-current" id="s1" aria-label="Slide 1 of 3">
+    <div class="slide-head">
+      <h1>What we tested, and why</h1>
+      <span class="head-meta">1 / 3</span>
+    </div>
+
+    <p class="thesis">
+      Readers skip stories they can&rsquo;t judge from the headline alone. So we asked whether a
+      <b>one-to-two sentence summary</b> beneath each homepage headline would get more of them to click.
+    </p>
+
+    <div class="variants">
+      <div class="variant">
+        <div class="variant-tag"><span class="swatch swatch-a"></span>A &mdash; Control</div>
+        <div class="mock">
+          <span class="mock-kicker">Transit</span>
+          <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
+          <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+        </div>
+      </div>
+      <div class="variant">
+        <div class="variant-tag"><span class="swatch swatch-b"></span>B &mdash; Treatment</div>
+        <div class="mock">
+          <span class="mock-kicker">Transit</span>
+          <p class="mock-headline">City council approves the transit levy after a six-hour hearing</p>
+          <p class="mock-dek is-new">The 5&ndash;4 vote clears funding for two new light-rail stops.
+            Opponents have thirty days to file a challenge.</p>
+          <div class="mock-rule"><span class="mock-byline">Metro desk &middot; 4 min read</span></div>
+        </div>
+      </div>
+    </div>
+
+    <dl class="strip">
+      <div>
+        <dt>Goal</dt>
+        <dd>Get more homepage visits to turn into an article read.</dd>
+      </div>
+      <div>
+        <dt>Primary KPI</dt>
+        <dd><b>Session click-through rate</b> &mdash; the share of homepage visits with at least one article click.</dd>
+      </div>
+      <div>
+        <dt>Scope</dt>
+        <dd>Top five homepage slots. Headline wording <b>identical</b> in both variants.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ================================================== SLIDE 2 ==== -->
+  <section class="slide" id="s2" aria-label="Slide 2 of 3">
+    <div class="slide-head">
+      <h1>What we found</h1>
+      <span class="head-meta">2 / 3</span>
+    </div>
+
+    <div class="findings">
+      <figure>
+        <p class="chart-title">Session click-through rate</p>
+        <svg viewBox="0 0 480 320" role="img"
+             aria-label="Variant A converts 34.01 percent of sessions; variant B converts 38.06 percent.">
+          <!-- scale: 0% at y=264, 40% at y=40  ->  5.6 px per point -->
+          <g font-family="Libre Franklin, sans-serif" font-size="12" fill="var(--muted)">
+            <line x1="52" y1="264" x2="470" y2="264" stroke="var(--rule)" stroke-width="1"></line>
+            <text x="44" y="268" text-anchor="end">0%</text>
+            <line x1="52" y1="208" x2="470" y2="208" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="44" y="212" text-anchor="end">10%</text>
+            <line x1="52" y1="152" x2="470" y2="152" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="44" y="156" text-anchor="end">20%</text>
+            <line x1="52" y1="96" x2="470" y2="96" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="44" y="100" text-anchor="end">30%</text>
+            <line x1="52" y1="40" x2="470" y2="40" stroke="var(--rule-soft)" stroke-width="1"></line>
+            <text x="44" y="44" text-anchor="end">40%</text>
+          </g>
+
+          <rect x="106" y="73.5" width="104" height="190.5" fill="var(--deemph)"></rect>
+          <rect x="300" y="50.9" width="104" height="213.1" fill="var(--accent)"></rect>
+
+          <!-- direct labels: identity never rests on colour alone -->
+          <g font-family="Libre Franklin, sans-serif" text-anchor="middle">
+            <text x="158" y="62" font-size="22" font-weight="600" fill="var(--ink)">34.01%</text>
+            <text x="352" y="39" font-size="22" font-weight="600" fill="var(--accent)">38.06%</text>
+            <text x="158" y="288" font-size="14" font-weight="600" fill="var(--ink-2)">A</text>
+            <text x="352" y="288" font-size="14" font-weight="600" fill="var(--ink-2)">B</text>
+            <text x="158" y="306" font-size="11.5" fill="var(--muted)">headline only</text>
+            <text x="352" y="306" font-size="11.5" fill="var(--muted)">with summary</text>
+          </g>
+        </svg>
+        <figcaption>150,568 sessions from 100,000 readers over five weeks &mdash; a
+          <b>synthetic dataset</b>. Zero-based axis: 34% and 38% genuinely are close, and the chart
+          is not going to pretend otherwise.</figcaption>
+      </figure>
+
+      <div class="tiles">
+        <div class="tile">
+          <p class="tile-label">Conversion rate</p>
+          <div class="rate-pair">
+            <span class="from">34.01%</span><span class="arrow">&rarr;</span><span class="to">38.06%</span>
+          </div>
+          <p class="tile-sub">78,341 sessions in A &middot; 72,227 in B</p>
+        </div>
+        <div class="tile">
+          <p class="tile-label">Uplift</p>
+          <p class="tile-value is-up">+11.9<span class="unit">% relative</span></p>
+          <p class="tile-sub">+4.05 percentage points</p>
+        </div>
+        <div class="tile">
+          <p class="tile-label">Confidence</p>
+          <p class="tile-value">99.99<span class="unit">%+</span></p>
+          <p class="tile-sub">p &lt; 0.0001 &nbsp;&middot;&nbsp; z = 14.7</p>
+        </div>
+      </div>
+    </div>
+
+    <figure>
+      <p class="chart-title">Where the true uplift sits &mdash; 95% confidence interval</p>
+      <svg viewBox="0 0 900 96" role="img"
+           aria-label="The 95 percent confidence interval for the relative uplift runs from plus 10.32 percent to plus 13.49 percent, centred on plus 11.90 percent. It does not come close to zero.">
+        <!-- scale: 0% at x=60, 15% at x=860  ->  53.33 px per point -->
+        <line x1="60" y1="48" x2="860" y2="48" stroke="var(--rule)" stroke-width="1"></line>
+        <g font-family="Libre Franklin, sans-serif" font-size="12" fill="var(--muted)" text-anchor="middle">
+          <line x1="60" y1="42" x2="60" y2="54" stroke="var(--rule)" stroke-width="1"></line>
+          <text x="60" y="74">0%</text>
+          <line x1="326.7" y1="44" x2="326.7" y2="52" stroke="var(--rule-soft)" stroke-width="1"></line>
+          <line x1="593.3" y1="44" x2="593.3" y2="52" stroke="var(--rule-soft)" stroke-width="1"></line>
+          <line x1="860" y1="42" x2="860" y2="54" stroke="var(--rule)" stroke-width="1"></line>
+          <text x="860" y="74">+15%</text>
+        </g>
+        <!-- the interval: 10.32% -> 13.49% -->
+        <rect x="610.4" y="39" width="169.1" height="18" rx="4" fill="var(--accent)" opacity="0.28"></rect>
+        <line x1="610.4" y1="34" x2="610.4" y2="62" stroke="var(--accent)" stroke-width="2"></line>
+        <line x1="779.5" y1="34" x2="779.5" y2="62" stroke="var(--accent)" stroke-width="2"></line>
+        <circle cx="694.7" cy="48" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"></circle>
+        <g font-family="Libre Franklin, sans-serif" font-size="13" font-weight="600" fill="var(--accent)">
+          <text x="694.7" y="26" text-anchor="middle">+11.90%</text>
+        </g>
+        <g font-family="Libre Franklin, sans-serif" font-size="11.5" fill="var(--ink-2)">
+          <text x="610.4" y="90" text-anchor="middle">+10.32%</text>
+          <text x="779.5" y="90" text-anchor="middle">+13.49%</text>
+        </g>
+        <g font-family="Libre Franklin, sans-serif" font-size="11.5" fill="var(--muted)">
+          <text x="76" y="30">no effect</text>
+        </g>
+      </svg>
+      <figcaption>The whole plausible range sits well clear of zero. Even the pessimistic end of the
+        interval is a double-digit improvement.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ================================================== SLIDE 3 ==== -->
+  <section class="slide" id="s3" aria-label="Slide 3 of 3">
+    <div class="slide-head">
+      <h1>Recommendation</h1>
+      <span class="head-meta">3 / 3</span>
+    </div>
+
+    <div class="verdict">
+      <span class="verdict-word">Roll out</span>
+      <p class="verdict-why">Every plausible value of the effect clears our bar for shipping, and no
+        guardrail moved the wrong way. Readers who clicked also <b>scrolled further, stayed longer and
+        bounced less</b> &mdash; more clicks and better ones, not a trade.</p>
+    </div>
+
+    <div class="cols">
+      <div>
+        <p class="col-head">Risks we are carrying</p>
+        <ul class="items">
+          <li><span class="dot dot-warn"></span>
+            <span><b>Fewer headlines above the fold.</b> Summaries take space &mdash; readers saw 4.3%
+            fewer headlines per visit. Ad inventory per visit was not instrumented, so the revenue
+            side of that is unmeasured.</span></li>
+          <li><span class="dot dot-warn"></span>
+            <span><b>Subscriber cancellations were never tested.</b> The data we have contains no
+            cancellation events, so that guardrail is untested rather than passed.</span></li>
+          <li><span class="dot dot-open"></span>
+            <span><b>Only 87% of stories had a summary written.</b> The measured effect is therefore a
+            floor, not a ceiling.</span></li>
+        </ul>
+      </div>
+      <div>
+        <p class="col-head">Next steps, in order</p>
+        <ul class="items">
+          <li><span class="num">1</span>
+            <span><b>Instrument ad inventory per visit</b> before the rollout is permanent. This is the
+            one open question that could change the answer.</span></li>
+          <li><span class="num">2</span>
+            <span><b>Run the cancellation check</b> against real subscriber data, and keep watching the
+            exposed cohorts for 60&ndash;90 days.</span></li>
+          <li><span class="num">3</span>
+            <span><b>Push summary coverage past 87%.</b> Coverage multiplies straight through to the
+            effect &mdash; this is the cheapest remaining upside.</span></li>
+          <li><span class="num">4</span>
+            <span><b>Test summary length next</b> &mdash; one sentence against two. The lever works;
+            now tune it.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="options">
+      <div class="option is-chosen">
+        <p class="option-name"><span class="mark"></span>Roll out</p>
+        <p class="option-why">Every plausible value of the effect clears the threshold set before the
+          test ran, and the open questions are measurement gaps.</p>
+      </div>
+      <div class="option">
+        <p class="option-name"><span class="mark"></span>Iterate</p>
+        <p class="option-why">Nothing about the variant needs changing &mdash; two missing
+          instruments are not a design problem.</p>
+      </div>
+      <div class="option">
+        <p class="option-name"><span class="mark"></span>Abandon</p>
+        <p class="option-why">No metric moved adversely except headlines per visit, a known and
+          quantified cost of the layout.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="bar" aria-label="Slide controls">
+  <button id="prev" type="button">&larr; Back</button>
+  <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+  <button id="next" type="button">Next &rarr;</button>
+  <span class="hint">Arrow keys to move &middot; P to print</span>
+</nav>
+
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const dots = document.getElementById("dots");
+  const prev = document.getElementById("prev");
+  const next = document.getElementById("next");
+  let i = 0;
+
+  slides.forEach((_, n) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-label", "Slide " + (n + 1));
+    b.addEventListener("click", () => go(n));
+    dots.append(b);
+  });
+
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle("is-current", k === i));
+    [...dots.children].forEach((d, k) => d.setAttribute("aria-current", k === i));
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  prev.addEventListener("click", () => go(i - 1));
+  next.addEventListener("click", () => go(i + 1));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.matches("input, textarea")) return;
+    if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); go(i + 1); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(i - 1); }
+    else if (e.key === "Home") { go(0); }
+    else if (e.key === "End") { go(slides.length - 1); }
+  });
+
+  go(0);
+</script>

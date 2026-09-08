@@ -34,21 +34,6 @@ uv run jupyter nbconvert --to notebook --execute --inplace 03-results.ipynb
 
 Both notebooks ship with outputs rendered, so they can be read without running anything.
 
-### Why only Step 1 is a document
-
-`01-step1-planning.md` is prose because the plan has to exist **before** any code runs — it is an
-input to the analysis, not an output of it. Steps 2 and 3 are notebooks because everything in them is
-derived from the data, and a prose restatement would just be a second place for the same numbers to
-drift out of date.
-
-### Where the boundary sits
-
-**Step 2 asks: did the generator produce what I specified?** — integrity invariants, realised rates
-against targets, coverage against the gate.
-**Step 3 asks: what does the experiment say?** — SRM, uplift, significance, guardrails, decision.
-
-No analysis cell appears in both notebooks.
-
 ## Files
 
 | File | What it is |
@@ -57,7 +42,10 @@ No analysis cell appears in both notebooks.
 | `01-step1-planning.md` | **Step 1** — goal, KPI, hypothesis, variants, randomisation, sample size, stopping conditions, assumptions, risks. |
 | `02-synthetic-data.ipynb` | **Step 2** — generates the dataset and verifies it matches spec. Config, generator, column dictionary, integrity checks, generator diagnostics. The single source for the data. |
 | `03-results.ipynb` | **Step 3** — the analysis. Validity gates, conversion per variant, uplift, significance, ITT dilution, guardrails, robustness, segments, the decision and follow-ups. |
-| `ab_test_sessions.csv` | The dataset — 150,568 sessions, 100,000 users. Generated, not committed. |
+| `04-early-peeking.ipynb` | **Step 4** — cumulative conversion by variant, the winner flipping, an A/A simulation of peeking, and what stopping early would have cost. |
+| `presentation.html` | **Stakeholder deck** — three slides, keyboard-driven. |
+| `ctr_by_variant.png` | The headline chart — CTR per variant with 95% CIs. Written by notebook 03. |
+| `abtest.py` | Shared helpers: the plan constants and the clustered-variance formula, defined once so notebooks 03 and 04 cannot drift apart. |
 
 ## Reproducibility
 
