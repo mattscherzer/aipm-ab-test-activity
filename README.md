@@ -12,7 +12,6 @@ click-through.
 
 ```
 index.html               the deck — also what GitHub Pages serves
-presentation-script.md   the speaking script, kept out of the deck on purpose
 planning/                the written work
   00-company-brief.md
   01-planning.md
@@ -28,7 +27,6 @@ analysis/                the computational work
 | File | What it is |
 |---|---|
 | [`index.html`](index.html) | **The deck.** Three slides. Carries no speaker notes by design — it is meant to be screen-shared. `P` prints it. |
-| [`presentation-script.md`](presentation-script.md) | The script — a setup beat, then per-slide notes with timings and stage directions, plus a numbers cheat-sheet and likely questions. Read it on a second device. |
 | [`planning/00-company-brief.md`](planning/00-company-brief.md) | The fictional company. Traffic, baselines, platform constraints, calendar. |
 | [`planning/01-planning.md`](planning/01-planning.md) | **Step 1** — goal, KPI, hypothesis, variants, randomisation, sample size, stopping conditions, assumptions, risks. |
 | [`analysis/02-synthetic-data.ipynb`](analysis/02-synthetic-data.ipynb) | **Step 2** — generates the dataset and verifies it matches spec. The single source for the data. |
